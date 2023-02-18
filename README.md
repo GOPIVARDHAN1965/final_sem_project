@@ -36,7 +36,17 @@ Imagine that after visiting a store or something to make our purchases, we final
 Additionally, consider the strength of the application we're going to develop. With the help of the user data, we can create insightful analysis each time a payment is made, allowing us to provide more useful recommendations. for instance, retail outlets for raw materials, wholesale markets. everywhere, actually. Additionally, we can assist people in completely digitizing their billing processes so that everyone becomes accustomed to managing digital bills and gains more knowledge about which products to sell at what margins in order to generate profits for their own businesses.
 
 
+Tasks Completed:
+1. Extracted data sets to perform our suggestion system and report generation
+2. completed algorithm for suggestion and other analysis part
+3. Set up repo
 
+Tasks to do:
+1. Designing web page 
+2. Coding the web page
+3. Connecting DB to web page
+4. Deploying algorithm in the backend
+5. Testing the project
 
 
 
