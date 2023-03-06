@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            tt's
+        </title>
+
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+                /* background-color: rgb(221, 217, 217); */
+                /* background-image: url('bg2.webp'); */
+                background-image: url('main4.jpg');
+                background-size:contain;
+                background-position: left;     
+
+            }
+            .main{
+                display: grid;
+                grid-template-columns: 450px 1fr;
+                column-gap: 10px;
+                /* background-color: white; */
+                background-color: rgb(221, 217, 217);
+                width: max-content;
+                height: fit-content;
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0px 0px 5px rgba(0,0,0,.55);
+                margin: auto;
+                margin-top: 20%;
+                transition: box-shadow .51s;
+            }
+            .main:hover{
+                box-shadow: 2px 2px 5px rgba(237, 4, 4, 0.95);
+            }
+            .fname{
+                width: 140px;
+                font-size: 15px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 8px;
+                border-radius: 4px;
+                border-width: 1px;
+                margin-bottom: 10px;
+            }
+            .lname{
+                width: 140px;
+                font-size: 15px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 8px;
+                border-radius: 4px;
+                border-width: 1px;
+                margin-bottom: 10px;
+            }
+            .email{
+                width: 295px;
+                display: block;
+                font-size: 15px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 8px;
+                border-radius: 4px;
+                border-width: 1px;
+                margin-bottom: 10px;
+            }
+            .s-btn,.f-btn{
+                font-weight: bold;
+                background-color: rgb(0, 106, 255);
+                color: white;
+                border: none;
+                width: 305px;
+                border-radius: 4px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left: 8px;
+                padding-right: 8px;
+                margin-bottom: 10px;
+                cursor: pointer;
+                display: block;
+            }
+            .part-1{
+                text-align: center;
+
+            }
+            .part-2{
+                border-left: solid;
+                padding-left: 20px;
+                padding-right: 10px;
+            }
+
+            .part-2-h{
+                text-align: center;
+                text-decoration: underline;
+            }
+            .part-1-h{
+                text-align: center;
+                text-decoration: underline;
+            }
+            .part-1-b{
+                padding-left: 10px;
+                text-align: left;   
+            }
+            li{
+                text-align: left;
+            }
+            .existing-text{
+                text-align: center;
+                font-size: 12px;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <div class="part-1">
+                <p class="part-1-h">About our Site</p>
+                <p class="part-1-b">
+                    To be more descriptive, our project is going to take the users'
+                     spending analytics from any UPI transaction app and prepare a
+                      suggestion model for them. We have to develop it into a mobile 
+                      app as well as a desktop app. Some of the pages or features of 
+                      the application will be as follows:
+                    <ol>
+                        <li> Spending Analysis </li>
+                        <li> Reports </li>
+                        <li> Suggestions </li>
+                    </ol>
+                </p>
+            </div>
+            <div class="part-2">
+                <p class="part-2-h">Sign Up</p>
+                <input class="fname" type="text" placeholder="First name">
+                <input class="lname" type="text" placeholder="Last name">
+                <input class="email" type="email" placeholder="Email">
+                <button class="s-btn">Sign Up</button>
+                <p class="existing-text"> Already have an account? </p>
+                <button class="f-btn">Log In</button>
+            </div>
+        </div>
+
+    
+
+
+    </body>
+</html>
