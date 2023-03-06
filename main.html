@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sample Page</title>
+        <style>
+            button {
+                background-color: transparent;
+                border: 1px solid navy;
+                padding: 20px;
+                font-size: 1.4rem;
+            }
+
+            button:hover{
+                background-color: navy;
+                border: none;
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <button>Click me</button>
+        <div class="container"></div>
+        <script>
+            function onClickEvent() {
+                const el = document.createElement('p');
+                el.innerText = 'Clicked Button';
+                document.querySelector('.container').appendChild(el);
+            }
+            document.querySelector('button').onclick = onClickEvent;
+        </script>
+    </body>
+</html>

@@ -46,7 +46,7 @@ Tasks to do:
 2. Coding the web page
 3. Connecting DB to web page
 4. Deploying algorithm in the backend
-5. Testing the project
+5. Testing and debugging the project
 
 
 
