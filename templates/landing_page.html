@@ -27,7 +27,7 @@
                 </p>
             </div>
             <div class="part-2">
-               <form action="{{url_for('landing_page')}}" method="POST">
+               <form action="{{url_for('landing_page')}}" method="POST" name="signupForm" onsubmit="validateForm()">
                 <p class="part-2-h">Sign Up</p>
                 <input class="fname" type="text" placeholder="First name" name="fname">
                 <input class="lname" type="text" placeholder="Last name" name="lname">
@@ -42,11 +42,26 @@
                 </form>
             </div>
         </div>
+        <!-- <script>
+        function validateForm() {
+            let fname = document.forms["signupForm"]["fname"].value;
+            let lname = document.forms["signupForm"]["lname"].value;
+            let email = document.forms["signupForm"]["email"].value;
+            let pwd1 = document.forms["signupForm"]["pwd1"].value;
+            let pwd2 = document.forms["signupForm"]["pwd2"].value;
+            if (email == "") {
+              alert("Email must be filled out");
+              return false;
+            }
+          }
+          </script> -->
+
         {% if message!= '' %}
         <script>
             let alertText = '{{message}}';
             alert(alertText);
         </script>
         {% endif %}
+
     </body>
 </html>

@@ -22,7 +22,7 @@ body{
     transition: box-shadow .51s;
 }
 .main:hover{
-    box-shadow: 2px 2px 5px rgba(237, 4, 4, 0.95);
+    box-shadow: 2px 2px 5px rgba(0, 191, 255, 0.95);
 }
 .email,.pwd{
     width: 295px;

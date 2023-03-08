@@ -23,6 +23,7 @@ body{
 }
 .main:hover{
     box-shadow: 2px 2px 5px rgba(237, 4, 4, 0.95);
+
 }
 .fname{
     width: 140px;

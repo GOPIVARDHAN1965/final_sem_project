@@ -30,7 +30,9 @@ users = db.users
 @app.route('/landing_page', methods=['GET', 'POST'])
 def landing_page():
     if request.method == 'POST':
-        user = {'fname': request.form['fname'],'lname': request.form['lname'], 'email': request.form['email']}
+        user = {'fname': request.form['fname'],'lname': request.form['lname'], 'email': request.form['email'], 'pwd1': request.form['pwd1'], 'pwd2': request.form['pwd2']}
+        if (user['fname']=='' or user['lname']=='' or user['email']=='' or user['pwd1']=='' or user['pwd2']==''):
+            return  render_template('landing_page.html', message='All data must be filled')
         existing_user = users.find_one({'email': user['email']})
         print(existing_user)
         if existing_user == None:
@@ -43,7 +45,7 @@ def landing_page():
                 return render_template('landing_page.html', message = "Both passwords must be same!")
         print("user already exists")
         return render_template('landing_page.html', message = "user already exists")
-    return render_template('landing_page.html')
+    return render_template('landing_page.html', message='')
 
 
 @app.route('/login', methods=['POST','GET'])
@@ -56,7 +58,7 @@ def login_page():
                 return "user logged in"
             return render_template(('login_page.html'), message = 'please check your password')
         return render_template(('login_page.html'), message = 'There is no account linked to this email')
-    return render_template('login_page.html')
+    return render_template('login_page.html', message="")
 
 
 @app.route('/logout')
