@@ -63,6 +63,12 @@ def login_page():
     return render_template('login_page.html', message="")
 
 
+####################################################
+# home page
+@app.route('/home', methods=['GET'])
+def home():
+    return render_template('home.html')
+
 @app.route('/logout')
 def logout():
     session.clear()
