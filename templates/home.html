@@ -7,7 +7,7 @@
     </title>
     <style>
         body {
-            padding-top: 70px;
+            padding: 82px;
         }
 
         .header {
@@ -20,7 +20,7 @@
             align-items: center;
             border-color: grey;
             border-style: solid;
-            background-color: rgba(0,0,0,.3);
+            background-color: rgba(0, 0, 0, .3);
             justify-content: space-between;
 
         }
@@ -29,43 +29,141 @@
             padding-top: 10px;
             padding-left: 30px;
             padding-right: 30px;
-
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 160px;
         }
-        .logo{
+
+        .logo {
             height: 60px;
         }
+
         /* video{
             width: 100px;
 
         } */
 
-        .header-middle{
+        .header-middle {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            min-width: 400px;
         }
 
-        .header-search-bar{
-            width: 300px;
+        .header-search-bar {
             height: 30px;
-            border-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-top-left-radius: 30px;
             border: none;
-            padding: 5px;
+            padding: 5px 10px;
+            font-family: Arial;
+            font-size: 16px;
+            min-width: 300px;
 
+        }
+
+        .header-search-bar::placeholder {
+            font-family: Arial;
+            font-size: 16px;
+        }
+
+        .search-btn {
+            height: 41px;
+            margin-left: -5px;
+            border-left: none;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgb(192, 192, 192);
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+            cursor: pointer;
         }
 
         .header-right {
-            padding-right: 20px;
-
+            padding-right: 30px;
         }
 
         .user-profile-pic {
             height: 40px;
         }
 
-        button {
+        .button-icon {
             height: 45px;
             width: 45px;
             border: none;
             background-color: rgb(178, 178, 178);
             cursor: pointer;
+        }
+
+        .page-heading {
+            margin-top: 10px;
+            margin-bottom: 30px;
+            font-family: arial;
+        }
+
+        .page-heading-text {
+            font-weight: bold;
+            font-size: 30px;
+            text-decoration: underline;
+        }
+
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            column-gap: 25px;
+            row-gap: 25px;
+        }
+
+        .item-tile {
+            padding: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, .55);
+        }
+
+        .item-pic-row {
+            margin-bottom: 10px;
+        }
+
+        .item-pic {
+            width: 100%;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .item-description {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .item-stock-code, .item-price, .item-rating {
+            font-size: 16px;
+            color: rgb(96, 96, 96);
+            margin-bottom: 4px;
+        }
+
+        @media (max-width:750px) {
+            .item-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width:500px) {
+            .item-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width:1080px) {
+            .item-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -73,28 +171,42 @@
 <body>
     <div class="header">
         <div class="header-left">
-            <!-- <video  autoplay>
-                <source src="data-analysis-3574969-2991611.mp4" type="video/mp4">
-            </video> -->
-            <!-- <img class="logo" src="data-analysis-3574969-2991611.mp4"> -->
-            <button>
+            <a class="logo-box" href="{{url_for('')}}">
                 <img class="logo" src="logo1.avif">
-            </button>
+            </a>
+            <a class="logo-box" href="{{url_for('')}}">
+                Reports
+            </a>
         </div>
         <div class="header-middle">
-            <input class="header-search-bar" type="text" placeholder="Search.">
+            <form>
+                <input class="header-search-bar" type="text" placeholder="Search.">
+                <button class="search-btn">Search</button>
+            </form>
         </div>
         <div class="header-right">
-            <button>
+            <button class="button-icon">
                 <img class="user-profile-pic" src="user-avatar.svg">
             </button>
         </div>
     </div>
-
-    <div class="main">
-        
+    <div class="page-heading">
+        <p class="page-heading-text">Our top picks for you</p>
     </div>
-    <div>gopi</div>
+    <div class="item-grid">
+        <div class="item-tile">
+            <div class="item-pic-row">
+                <img class="item-pic" src="cat.jpg">
+            </div>
+            <div class="item-info">
+                <p class="item-description">Item description</p>
+                <p class="item-stock-code">Item Stock Code</p>
+                <p class="item-price">Item price</p>
+                <p class="item-rating"> Item rating</p>
+            </div>
+        </div>
+
+    </div>
 </body>
 
 </html>
