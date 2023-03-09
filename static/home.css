@@ -74,6 +74,12 @@ body {
 
 .header-right {
     padding-right: 30px;
+    display: flex;
+    align-items: center;
+}
+.user-name{
+    margin: 0;
+    margin-right: 20px;
 }
 
 .user-profile-pic {

@@ -11,11 +11,11 @@
 <body>
     <div class="header">
         <div class="header-left">
-            <a class="logo-box" href="{{url_for('login_page')}}">
+            <a class="logo-box" href="{{url_for('home')}}">
                 <img class="logo" src="static/logo1.avif">
             </a>
             <a class="logo-box" href="#" >
-                Reports
+                Dashboard
             </a>
         </div>
         <div class="header-middle">
@@ -25,6 +25,7 @@
             </form>
         </div>
         <div class="header-right">
+            <p class="user-name">{{user['first_name']}}</p>
             <button class="button-icon">
                 <img class="user-profile-pic" src="static/user-avatar.svg">
             </button>

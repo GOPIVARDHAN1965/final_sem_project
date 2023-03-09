@@ -41,7 +41,7 @@ def landing_page():
                 hashpass = bcrypt.hashpw(request.form['pwd1'].encode('utf-8'), bcrypt.gensalt())
                 users.insert_one({'email': user['email'], 'password': hashpass,'first_name': user['fname'], 'last-name': user['lname']})
                 session['user_id'] = user['email']
-                return 'user registered'
+                return redirect(url_for('home'))
             else:
                 return render_template('landing_page.html', message = "Both passwords must be same!")
         print("user already exists")
@@ -57,7 +57,7 @@ def login_page():
         if login_user:
             if bcrypt.hashpw(request.form['pwd1'].encode('utf-8'), login_user['password']) == login_user['password']:
                 session['user_id'] = request.form['email']
-                return "user logged in"
+                return redirect(url_for('home'))
             return render_template(('login_page.html'), message = 'please check your password')
         return render_template(('login_page.html'), message = 'There is no account linked to this email')
     return render_template('login_page.html', message="")
@@ -67,7 +67,12 @@ def login_page():
 # home page
 @app.route('/home', methods=['GET'])
 def home():
-    return render_template('home.html')
+    if 'user_id' in session:
+        user = users.find_one({'email': session['user_id']})
+        print(user)
+        print(session)
+        return render_template('home.html', user = user)
+    return redirect(url_for('login_page'))
 
 @app.route('/logout')
 def logout():
