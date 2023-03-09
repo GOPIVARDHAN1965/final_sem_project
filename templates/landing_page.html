@@ -57,10 +57,9 @@
           </script> -->
 
         {% if message!= '' %}
-        <script>
-            let alertText = '{{message}}';
-            alert(alertText);
-        </script>
+        <div class="message-box">
+            <p class="message"> {{message}}</p>
+        </div>
         {% endif %}
 
     </body>

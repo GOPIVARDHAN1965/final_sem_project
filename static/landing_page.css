@@ -6,6 +6,27 @@ body{
     background-size:contain;
     background-position: left;     
 }
+.message-box{
+    display: flex;
+    height: 30px;
+    color: white;
+    background-color: red;
+    position: fixed;
+    top: 0px;
+    left: 0;
+    right: 0;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.message{
+    margin: 0;
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+
 .main{
     display: grid;
     grid-template-columns: 450px 1fr;
@@ -23,7 +44,6 @@ body{
 }
 .main:hover{
     box-shadow: 2px 2px 5px rgba(237, 4, 4, 0.95);
-
 }
 .fname{
     width: 140px;

@@ -1,45 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-        <link rel="stylesheet" href="static/login_page.css">
-        <title>
-            landing page
-        </title>
-    </head>
 
-    <body>
-        <div class="main">
-            <div class="part-2">
-               <form name="loginForm" action="{{url_for('login_page')}}" onsubmit="validateForm()"  method="POST"  >
+<head>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" href="static/login_page.css">
+    <title>
+        landing page
+    </title>
+</head>
+
+<body>
+    <div class="main">
+        <div class="part-2">
+            <form name="loginForm" action="{{url_for('login_page')}}" onsubmit="validateForm()" method="POST">
                 <p class="part-2-h">Login</p>
                 <input class="email" type="email" placeholder="Email" name="email">
                 <input class="pwd" type="password" placeholder="Password" name="pwd1">
                 <button class="f-btn">Log In</button>
-            </form >
+            </form>
             <p class="existing-text"> Dont have an account? </p>
             <form action="{{url_for('landing_page')}}" method="GET">
                 <button class="f-btn">Sign Up</button>
             </form>
-            </div>
-           
         </div>
-        <script>
-            function validateForm() {
-              let x = document.forms["loginForm"]["email"].value;
-              if (x == "") {
-                alert("Email must be filled out");
-                return false;
-              }
-            }
-            </script>
 
-        {% if message!= '' %}
-        <script>
-            let alertText = '{{message}}';
-            alert(alertText);
-        </script>
-        {% endif %}
-    </body>
+    </div>
+
+
+    {% if message!= '' %}
+    <div class="message-box">
+        <p class="message"> {{message}}</p>
+    </div>
+    {% endif %}
+</body>
+
 </html>
