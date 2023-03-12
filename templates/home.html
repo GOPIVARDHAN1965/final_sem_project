@@ -2,9 +2,12 @@
 <html>
 
 <head>
+    {% block head %}
     <title>
         Home
     </title>
+    {% endblock %}
+   
     <link rel="stylesheet" href="static/home.css">
 </head>
 
@@ -14,7 +17,7 @@
             <a class="logo-box" href="{{url_for('home')}}">
                 <img class="logo" src="static/logo1.avif">
             </a>
-            <a class="logo-box" href="#" >
+            <a class="logo-box" href="{{url_for('dashboard')}}" >
                 Dashboard
             </a>
         </div>
@@ -25,12 +28,17 @@
             </form>
         </div>
         <div class="header-right">
-            <p class="user-name">{{user['first_name']}}</p>
+            <div class="user-header-continer">
+                <p class="user-name">{{user['first_name']}}</p>
+                <p class="user-customerid">CustomerID: {{user['CustomerID']}}</p>
+            </div>
+            
             <button class="button-icon">
                 <img class="user-profile-pic" src="static/user-avatar.svg">
             </button>
         </div>
     </div>
+    {% block body %}
     <div class="page-heading">
         <p class="page-heading-text">Our top picks for you</p>
     </div>
@@ -48,6 +56,8 @@
         </div>
 
     </div>
+    {% endblock %}
+
 </body>
 
 </html>

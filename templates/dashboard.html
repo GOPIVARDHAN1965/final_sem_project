@@ -1,0 +1,28 @@
+{% extends 'home.html' %} {% block head %}
+<title>Dashboard</title>
+<link rel="stylesheet" href="static/dashboard.css">
+{% endblock %}
+{% block body %}
+<div>year : 2023 2022 2021</div>
+<div class="year-contianer">
+  <img class="year-img" src="data:image/png;base64,{{year}}" />
+</div>
+<div>
+  <div class="month-list">
+    month :
+    {% if months_purchased|length > 0 %}
+    {% for each in months_purchased %}
+    <div class="each-month">
+       <a href="/{{each}}">  {{each}}</a>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  {% if days_purchased|length > 0 %}
+  <div>
+    <img class="month-img" src="data:image/png;base64,{{month}}" />
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

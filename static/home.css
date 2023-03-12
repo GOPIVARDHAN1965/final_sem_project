@@ -14,6 +14,7 @@ body {
     border-style: solid;
     background-color: rgba(0, 0, 0, .3);
     justify-content: space-between;
+    font-family: Arial, Helvetica, sans-serif;
 
 }
 
@@ -77,9 +78,18 @@ body {
     display: flex;
     align-items: center;
 }
+.user-header-continer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 30px;
+}
+.user-customerid{
+    font-size: 12px;
+}
 .user-name{
     margin: 0;
-    margin-right: 20px;
+    font-size: 20px;
 }
 
 .user-profile-pic {

@@ -1,0 +1,28 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+.year-contianer {
+    display: flex;
+    border-style: solid;
+    justify-content: center;
+}
+
+.year-img {
+    height: 50%;
+    width: 50%;
+}
+
+.month-list {
+    display: flex;
+    flex-direction: row;
+}
+
+.each-month{
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.month-img {
+    height: 100%;
+    width: 100%;
+}
