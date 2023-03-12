@@ -12,6 +12,8 @@ app = Flask(__name__, static_folder='static/',
             template_folder='templates', static_url_path='/static/')
 app.secret_key = '!secret'
 df = pd.read_csv('purchases.csv')
+month_names = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
+
 
 
 try:
@@ -94,7 +96,7 @@ def dashboard():
     if 'user_id' in session:
         print('user in session')
         user = users.find_one({'email': session['user_id']})
-        fig = Figure(figsize=(8, 4), linewidth=0)
+        fig = Figure(figsize=(12, 8), linewidth=0)
         ax = fig.subplots()
         single_customer = df[df['CustomerID'] == user['CustomerID']]
         # single_customer = df[df['CustomerID'] == 17914]
@@ -113,7 +115,8 @@ def dashboard():
         buf.seek(0)
         # Embed the result in the html output.
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
-        return render_template('dashboard.html', year=data, user=user, months_purchased = month.index)
+        print(month)
+        return render_template('dashboard.html', year=data, user=user, months_purchased = month.index, month_names = month_names)
     return redirect(url_for('login_page'))
 
 
@@ -125,7 +128,7 @@ def dashboard():
 def dashboard_month(specific_month):
     if 'user_id' in session:
         user = users.find_one({'email': session['user_id']})
-        fig = Figure(figsize=(8, 4), linewidth=0)
+        fig = Figure(figsize=(12, 8), linewidth=0)
         ax = fig.subplots()
         single_customer = df[df['CustomerID'] == user['CustomerID']]
         # single_customer = df[df['CustomerID'] == 17914]
@@ -145,7 +148,7 @@ def dashboard_month(specific_month):
         #month wise
         single_month = single_customer[single_customer['Month']==int(specific_month)]
         one_month = single_month.groupby('Date')['TotalPrice'].sum() 
-        fig1 = Figure(figsize=(8, 4), linewidth=0)
+        fig1 = Figure(figsize=(12, 8), linewidth=0)
         axs = fig1.subplots()
         axs.bar(one_month.index, one_month,)
         # ax.set_xticks()
@@ -159,7 +162,7 @@ def dashboard_month(specific_month):
         # Embed the result in the html output.
         data1 = base64.b64encode(buf1.getbuffer()).decode("ascii")
         print(one_month)
-        return render_template('dashboard.html', year=data, month=data1, user=user,months_purchased = month.index, days_purchased = one_month.index)
+        return render_template('dashboard.html', year=data, month=data1, user=user,months_purchased = month.index, days_purchased = one_month.index, month_names = month_names)
     return redirect(url_for('login_page'))
 
 
