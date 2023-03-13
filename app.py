@@ -115,8 +115,8 @@ def dashboard():
         buf.seek(0)
         # Embed the result in the html output.
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
-        print(month)
-        return render_template('dashboard.html', year=data, user=user, months_purchased = month.index, month_names = month_names)
+        print(month.to_dict())
+        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month.to_dict())
     return redirect(url_for('login_page'))
 
 
@@ -162,7 +162,7 @@ def dashboard_month(specific_month):
         # Embed the result in the html output.
         data1 = base64.b64encode(buf1.getbuffer()).decode("ascii")
         print(one_month)
-        return render_template('dashboard.html', year=data, month=data1, user=user,months_purchased = month.index, days_purchased = one_month.index, month_names = month_names)
+        return render_template('dashboard.html', year=data, month=data1, user=user,months_data = month.to_dict(), days_purchased = one_month.to_dict(), month_names = month_names)
     return redirect(url_for('login_page'))
 
 

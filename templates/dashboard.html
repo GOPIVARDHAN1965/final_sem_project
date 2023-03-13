@@ -1,28 +1,52 @@
 {% extends 'home.html' %} {% block head %}
 <title>Dashboard</title>
-<link rel="stylesheet" href="static/dashboard.css">
-{% endblock %}
-{% block body %}
+<link rel="stylesheet" href="static/dashboard.css" />
+{% endblock %} {% block body %}
 <div>year : 2023 2022 2021</div>
 <div class="year-contianer">
   <img class="year-img" src="data:image/png;base64,{{year}}" />
-</div>
-<hr>
-<div class="month-list">
-    month available :
-    {% if months_purchased|length > 0 %}
-    {% for each in months_purchased %}
-    <div class="each-month">
-       <a href="{{each}}">  {{each}}</a>
+  <div class="year-info">
+    {% if months_data|length > 0 %}
+    <div class="table-head">
+      <div class="table-left">Month</div>
+      <div class="table-right">Amount Spent in $</div>
     </div>
-    {% endfor %}
-    {% endif %}
+    <div class="table-body">
+      {% for each in months_data %}
+      <div class="table-left">{{month_names[each]}}</div>
+      <div class="table-right">$. {{months_data[each]}} </div>
+      {% endfor %} {% endif %}
+    </div>
+  </div>
+</div>
+<hr />
+<div class="each-month">
+  <a href="{{each}}"> {{month_names[each]}}</a>
+</div>
+<div class="month-list">
+  month available : {% if months_data|length > 0 %} {% for each in months_data
+  %}
+  <div class="each-month">
+    <a href="{{each}}"> {{month_names[each]}}</a>
+  </div>
+  {% endfor %} {% endif %}
 </div>
 {% if days_purchased|length > 0 %}
-  <div class="month-container">
-    <img class="month-img" src="data:image/png;base64,{{month}}" />
+<div class="month-container">
+  <img class="month-img" src="data:image/png;base64,{{month}}" />
+  <div class="month-info">
+      {% if days_purchased|length > 0 %}
+      <div class="table-head">
+        <div class="table-left">Date</div>
+        <div class="table-right">Amount Spent in $</div>
+      </div>
+      <div class="table-body">
+        {% for each in days_purchased %}
+        <div class="table-left">{{each}}</div>
+        <div class="table-right">$. {{days_purchased[each]}} </div>
+        {% endfor %} {% endif %}
+      </div>
   </div>
+</div>
 
-{% endif %}
-
-{% endblock %}
+{% endif %} {% endblock %}

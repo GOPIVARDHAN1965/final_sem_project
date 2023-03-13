@@ -28,6 +28,10 @@ body {
     width: 160px;
 }
 
+.logo-box{
+    margin: 10px;
+}
+
 .logo {
     height: 60px;
 }
