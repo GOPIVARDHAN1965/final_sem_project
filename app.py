@@ -1,18 +1,30 @@
 import bcrypt
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 import pymongo
 # for analysis
 from matplotlib.figure import Figure
 import pandas as pd
 import base64
 from io import BytesIO
-
+import random
 
 app = Flask(__name__, static_folder='static/',
             template_folder='templates', static_url_path='/static/')
 app.secret_key = '!secret'
 df = pd.read_csv('purchases.csv')
+df['TotalPrice'] = df['TotalPrice'].round(decimals=2)
+items = pd.read_excel('items_list.xlsx')
+items['Description'] = items['Description'].astype(str)
 month_names = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
+ndf = df.pivot_table(index='StockCode', columns='InvoiceNo', values='Quantity')
+ndf.fillna(0, inplace=True)
+from scipy.sparse import csr_matrix
+csr_data = csr_matrix(ndf.values)
+ndf.reset_index(inplace=True)
+# ndf
+from sklearn.neighbors import NearestNeighbors
+knn=NearestNeighbors(metric='cosine',n_neighbors=10)
+knn.fit(csr_data)
 
 
 
@@ -50,8 +62,12 @@ def landing_page():
             if request.form['pwd1'] == request.form['pwd2']:
                 hashpass = bcrypt.hashpw(
                     request.form['pwd1'].encode('utf-8'), bcrypt.gensalt())
-                users.insert_one({'email': user['email'], 'password': hashpass,
-                                 'first_name': user['fname'], 'last-name': user['lname']})
+                custId = random.choice(df['CustomerID'].unique())
+                print(users.find_one({'CustomerID':int(str(custId)) }))
+                while users.find_one({'CustomerID':int(str(custId)) })!=None:
+                    custId = random.choice(df['CustomerID'].unique())
+                custId = int(str(custId))
+                users.insert_one({'email': user['email'], 'password': hashpass,'first_name': user['fname'], 'last-name': user['lname'],'CustomerID': custId})
                 session['user_id'] = user['email']
                 return redirect(url_for('home'))
             else:
@@ -60,10 +76,10 @@ def landing_page():
         return render_template('landing_page.html', message="user already exists")
     return render_template('landing_page.html', message='')
 
+
+
 ####################################################
 # login in page
-
-
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
     if request.method == 'POST':
@@ -78,14 +94,71 @@ def login_page():
 
 
 ####################################################
-# home page per year
+# home page 
 @app.route('/home', methods=['GET'])
 def home():
     if 'user_id' in session:
         user = users.find_one({'email': session['user_id']})
-        print(user)
-        print(session)
-        return render_template('home.html', user=user)
+        # print(user)
+        # print(session)
+        # the top ten items purchased by the customer
+        top_purchses = df[df['CustomerID']==user['CustomerID']].groupby('StockCode')['Quantity'].sum().sort_values(ascending=False).index[:10].to_list()
+        recommendations = set()
+        for each_item in top_purchses:
+            ndf[ndf['StockCode'] == each_item].index[0]
+            similarities,indeces=knn.kneighbors(csr_data[ndf[ndf['StockCode'] == each_item].index[0]],n_neighbors=10)
+            rec = sorted(zip(indeces.squeeze().tolist(),similarities.squeeze().tolist()),key=lambda x:x[1])[:0:-1]
+            # print('Recommendations for item '+df[df['StockCode']==each_item]['Description'].values[0]+ 'are : ')
+            for val in rec:
+                recommendations.add(ndf.iloc[val[0]]['StockCode'])
+        # print(recommendations)
+        item_data = []
+        for each_code in recommendations:
+            temp = items[items['StockCode']==each_code].iloc[0]
+            item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
+        # print(item_data)
+        return render_template('home.html', user=user, item_data = item_data)
+    return redirect(url_for('login_page'))
+
+
+####################################################
+# search bar
+@app.route('/search')
+def search():
+    if 'user_id' in session:
+        user = users.find_one({'email': session['user_id']})
+        query = request.args['box-txt']
+        print(query)
+        print(type(query))
+        result = items.loc[items['Description'].str.contains(query.upper())]['Description']
+        suggestions = result.to_list()
+        print(suggestions[:10])
+        # return jsonify(suggestions[:10])
+        return render_template('search.html', user=user,suggestions=suggestions[:12],query=query)
+    return redirect(url_for('login_page'))
+
+
+####################################################
+# search bar
+@app.route('/find/<name>')
+def find_item(name):
+    if 'user_id' in session:
+        user = users.find_one({'email': session['user_id']})
+        top_purchses = df.loc[df['Description'].str.contains(name.upper()),]['StockCode'].to_list()[0]
+        recommendations = set()
+        ndf[ndf['StockCode'] == top_purchses].index[0]
+        similarities,indeces=knn.kneighbors(csr_data[ndf[ndf['StockCode'] == top_purchses].index[0]],n_neighbors=10)
+        rec = sorted(zip(indeces.squeeze().tolist(),similarities.squeeze().tolist()),key=lambda x:x[1])[:0:-1]
+        # print('Recommendations for item '+df[df['StockCode']==each_item]['Description'].values[0]+ 'are : ')
+        for val in rec:
+            recommendations.add(ndf.iloc[val[0]]['StockCode'])
+        print(recommendations)
+        item_data = []
+        for each_code in recommendations:
+            temp = items[items['StockCode']==each_code].iloc[0]
+            item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
+        # print(item_data)
+        return render_template('find_item.html', user=user, item_data = item_data)
     return redirect(url_for('login_page'))
 
 
@@ -94,7 +167,7 @@ def home():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if 'user_id' in session:
-        print('user in session')
+        # print('user in session')
         user = users.find_one({'email': session['user_id']})
         fig = Figure(figsize=(12, 8), linewidth=0)
         ax = fig.subplots()
@@ -107,19 +180,21 @@ def dashboard():
         ax.set_xlabel('Months')
         ax.set_ylabel('Amount spent')
         ax.set_title('My yearly expense')
-        print(sum(month))
-        print(month.index)
+        # print(sum(month))
+        # print(month.index)
         # Save it to a temporary buffer.
         buf = BytesIO()
         fig.savefig(buf, format="png")
         buf.seek(0)
+        month=month.to_dict()
+        for i in month:
+            month[i] = round(month[i],3)
+            print(month[i])
         # Embed the result in the html output.
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
-        print(month.to_dict())
-        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month.to_dict())
+        # print(month.to_dict())
+        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month)
     return redirect(url_for('login_page'))
-
-
 
 
 ####################################################
@@ -140,6 +215,10 @@ def dashboard_month(specific_month):
         ax.set_ylabel('Amount spent')
         ax.set_title('My yearly expense')
         # Save it to a temporary buffer.
+        month=month.to_dict()
+        for i in month:
+            month[i] = round(month[i],3)
+            print(month[i])
         buf = BytesIO()
         fig.savefig(buf, format="png")
         buf.seek(0)
@@ -147,7 +226,7 @@ def dashboard_month(specific_month):
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
         #month wise
         single_month = single_customer[single_customer['Month']==int(specific_month)]
-        one_month = single_month.groupby('Date')['TotalPrice'].sum() 
+        one_month = single_month.groupby('Date')['TotalPrice'].sum()
         fig1 = Figure(figsize=(12, 8), linewidth=0)
         axs = fig1.subplots()
         axs.bar(one_month.index, one_month,)
@@ -159,10 +238,14 @@ def dashboard_month(specific_month):
         buf1 = BytesIO()
         fig1.savefig(buf1, format="png")
         buf1.seek(0)
+        one_month = one_month.to_dict()
+        for i in one_month:
+            one_month[i] = round(one_month[i],3)
+            print(one_month[i])
         # Embed the result in the html output.
         data1 = base64.b64encode(buf1.getbuffer()).decode("ascii")
-        print(one_month)
-        return render_template('dashboard.html', year=data, month=data1, user=user,months_data = month.to_dict(), days_purchased = one_month.to_dict(), month_names = month_names)
+        # print(one_month)
+        return render_template('dashboard.html', year=data, month=data1, user=user,months_data = month, days_purchased = one_month, month_names = month_names)
     return redirect(url_for('login_page'))
 
 
@@ -175,4 +258,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0', port=8080)
