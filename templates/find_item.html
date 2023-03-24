@@ -1,23 +1,87 @@
-{% extends 'home.html' %}
-{% block head %}
-<title>Find</title>
-<link rel="stylesheet" href="{{ url_for('static',filename='home.css') }}" />
-{% endblock %} 
-{% block body %}
-    <div class="page-heading">
-      <p class="page-heading-text">Our top picks for you</p>
-    </div>
-    <div class="item-grid">
-      {% if item_data|length >0 %} {% for each_item in item_data %}
-      <div class="item-tile">
-        <div class="item-pic-row"><img class="item-pic" src></div>
-        <div class="item-info">
-          <p class="item-description">Name: {{each_item['Description']}}</p>
-          <p class="item-stock-code">StcokCode: {{each_item['StockCode']}}</p>
-          <p class="item-price">Price: $. {{each_item['UnitPrice']}}</p>
-          <!-- <p class="item-rating">Item rating</p> -->
-        </div>
-      </div>
-      {% endfor %} {% endif %}
-    </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+    <title>Find</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='home.css') }}" />
+
     {% endblock %}
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <a class="logo-box" href="{{url_for('home')}}">
+          <img class="logo" src="static/logo1.avif" alt="Home" />
+        </a>
+        <a class="logo-box" href="{{url_for('dashboard')}}"> Dashboard </a>
+      </div>
+      <div class="header-middle">
+        <form action="/search" method="GET">
+          <input
+            class="header-search-bar"
+            type="text"
+            placeholder="Search."
+            name="box-txt"            
+          />
+          <button class="search-btn">Search</button>
+        </form>
+        <div id="search-suggestions"></div>
+      </div>
+      <div class="header-right">
+        <div class="user-header-continer">
+          <p class="user-name">{{user['first_name']}}</p>
+          <p class="user-customerid">CustomerID: {{user['CustomerID']}}</p>
+        </div>
+
+        <button class="button-icon">
+          <img class="user-profile-pic" src="static/user-avatar.svg" />
+        </button>
+      </div>
+    </div>
+    {% block body %}
+    <div class="page-heading">
+        <p class="page-heading-text">Item you searched for</p>
+      </div>
+      <div class="item-grid">
+        {% if item_data|length >0 %} {% for each_item in item_data[:1] %}
+        <div class="item-tile">
+          <div class="item-pic-row"><img class="item-pic" src="each_item['img']"></div>
+          <div class="item-info">
+            <p class="item-description">Name: {{each_item['Description']}}</p>
+            <p class="item-stock-code">StcokCode: {{each_item['StockCode']}}</p>
+            <p class="item-price">Price: $. {{each_item['UnitPrice']}}</p>
+            <!-- <p class="item-rating">Item rating</p> -->
+          </div>
+        </div>
+        {% endfor %} {% endif %}
+      </div>
+    <!-- dad -->
+        <div class="page-heading">
+          <p class="page-heading-text">Items people buy along with {{item_data[0]['Description']}} </p>
+        </div>
+        <div class="item-grid">
+          {% if item_data|length >0 %} {% for each_item in item_data[1:] %}
+          <div class="item-tile">
+            <div class="item-pic-row"><img class="item-pic" src="each_item['img']"></div>
+            <div class="item-info">
+              <p class="item-description">Name: {{each_item['Description']}}</p>
+              <p class="item-stock-code">StcokCode: {{each_item['StockCode']}}</p>
+              <p class="item-price">Price: $. {{each_item['UnitPrice']}}</p>
+              <!-- <p class="item-rating">Item rating</p> -->
+            </div>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+        {% endblock %}
+  </body>
+</html>
+
+
+
+
+
+
+
+
+

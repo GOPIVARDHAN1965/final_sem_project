@@ -1,8 +1,16 @@
 {% extends 'home.html' %} {% block head %}
 <title>Dashboard</title>
-<link rel="stylesheet" href="static/dashboard.css" />
+<link rel="stylesheet" href="{{ url_for('static',filename='dashboard.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static',filename='home.css') }}" />
 {% endblock %} {% block body %}
-<div>year : 2023 2022 2021</div>
+<div  class="month-list">
+  Years Available : {% if years_available|length > 0 %} {% for each in years_available
+    %}
+    <div class="each-month">
+      <a href="/dashboard/{{each}}"> {{each}}</a>
+    </div>
+    {% endfor %} {% endif %}
+</div>
 <div class="year-contianer">
   <img class="year-img" src="data:image/png;base64,{{year}}" />
   <div class="year-info">
@@ -21,13 +29,13 @@
 </div>
 <hr />
 <div class="each-month">
-  <a href="{{each}}"> {{month_names[each]}}</a>
+  <a href="/{{each}}"> {{month_names[each]}}</a>
 </div>
 <div class="month-list">
   month available : {% if months_data|length > 0 %} {% for each in months_data
   %}
   <div class="each-month">
-    <a href="{{each}}"> {{month_names[each]}}</a>
+    <a href="/dashboard/{{months_data['year']}}/{{each}}"> {{month_names[each]}}</a>
   </div>
   {% endfor %} {% endif %}
 </div>
@@ -42,7 +50,7 @@
       </div>
       <div class="table-body">
         {% for each in days_purchased %}
-        <div class="table-left">{{each}}</div>
+        <div class="table-left"><a href="/invoice/{{each}}">{{each}}</a></div>
         <div class="table-right">$. {{days_purchased[each]}} </div>
         {% endfor %} {% endif %}
       </div>

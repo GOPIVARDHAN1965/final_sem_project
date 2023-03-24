@@ -1,13 +1,13 @@
 {% extends 'home.html' %}
 {% block head %}
 <title>Search</title>
-<link rel="stylesheet" href="static/search.css" />
+<link rel="stylesheet" href="static/home.css"/>
 {% endblock %} 
 {% block body %}
 {% if suggestions|length >0 %}
 <p>Here are top suggestions matching with &#x22 {{query}} &#x22 </p>
 {% for name in suggestions %}
-<p><a href="/find/{{name}}">{{name}}</a></p>
+<p><a href="/home/{{name}}">{{name}}</a></p>
 {% endfor %}
 {% else %}
 <p>No matchings found for {{query}} </p>

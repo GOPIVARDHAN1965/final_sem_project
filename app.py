@@ -13,6 +13,7 @@ app = Flask(__name__, static_folder='static/',
 app.secret_key = '!secret'
 df = pd.read_csv('purchases.csv')
 df['TotalPrice'] = df['TotalPrice'].round(decimals=2)
+df['Year'] = pd.to_datetime(df['Date']).dt.year
 items = pd.read_excel('items_list.xlsx')
 items['Description'] = items['Description'].astype(str)
 month_names = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
@@ -25,7 +26,6 @@ ndf.reset_index(inplace=True)
 from sklearn.neighbors import NearestNeighbors
 knn=NearestNeighbors(metric='cosine',n_neighbors=10)
 knn.fit(csr_data)
-
 
 
 try:
@@ -106,7 +106,7 @@ def home():
         recommendations = set()
         for each_item in top_purchses:
             ndf[ndf['StockCode'] == each_item].index[0]
-            similarities,indeces=knn.kneighbors(csr_data[ndf[ndf['StockCode'] == each_item].index[0]],n_neighbors=10)
+            similarities,indeces=knn.kneighbors(csr_data[ndf[ndf['StockCode'] == each_item].index[0]],n_neighbors=5)
             rec = sorted(zip(indeces.squeeze().tolist(),similarities.squeeze().tolist()),key=lambda x:x[1])[:0:-1]
             # print('Recommendations for item '+df[df['StockCode']==each_item]['Description'].values[0]+ 'are : ')
             for val in rec:
@@ -140,7 +140,7 @@ def search():
 
 ####################################################
 # search bar
-@app.route('/find/<name>')
+@app.route('/home/<name>')
 def find_item(name):
     if 'user_id' in session:
         user = users.find_one({'email': session['user_id']})
@@ -152,8 +152,11 @@ def find_item(name):
         # print('Recommendations for item '+df[df['StockCode']==each_item]['Description'].values[0]+ 'are : ')
         for val in rec:
             recommendations.add(ndf.iloc[val[0]]['StockCode'])
-        print(recommendations)
+        # print(recommendations)
         item_data = []
+        temp = items[items['StockCode']==top_purchses].iloc[0]
+        item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
+        print(item_data)
         for each_code in recommendations:
             temp = items[items['StockCode']==each_code].iloc[0]
             item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
@@ -169,9 +172,11 @@ def dashboard():
     if 'user_id' in session:
         # print('user in session')
         user = users.find_one({'email': session['user_id']})
+        years_available = df[df['CustomerID']==user['CustomerID']]['Year'].unique()
+        # print(years_available)
         fig = Figure(figsize=(12, 8), linewidth=0)
         ax = fig.subplots()
-        single_customer = df[df['CustomerID'] == user['CustomerID']]
+        single_customer = df[(df['CustomerID'] == user['CustomerID']) & (df['Year']==years_available[0])]
         # single_customer = df[df['CustomerID'] == 17914]
         #monthly spend
         month = single_customer.groupby('Month')['TotalPrice'].sum()
@@ -189,39 +194,85 @@ def dashboard():
         month=month.to_dict()
         for i in month:
             month[i] = round(month[i],3)
-            print(month[i])
+            # print(month[i])
         # Embed the result in the html output.
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
         # print(month.to_dict())
-        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month)
+        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month,years_available=years_available)
     return redirect(url_for('login_page'))
 
 
 ####################################################
-# Dashboard page per month
-@app.route('/<specific_month>', methods=['GET', 'POST'])
-def dashboard_month(specific_month):
+# Dashboard page
+@app.route('/dashboard/<year>', methods=['GET', 'POST'])
+def dashboard_year(year):
     if 'user_id' in session:
+        # print('user in session')
         user = users.find_one({'email': session['user_id']})
+        years_available = df[df['CustomerID']==user['CustomerID']]['Year'].unique()
+        # print(years_available)
         fig = Figure(figsize=(12, 8), linewidth=0)
         ax = fig.subplots()
-        single_customer = df[df['CustomerID'] == user['CustomerID']]
+        single_customer = df[(df['CustomerID'] == user['CustomerID']) & (df['Year']==int(year))]
         # single_customer = df[df['CustomerID'] == 17914]
         #monthly spend
         month = single_customer.groupby('Month')['TotalPrice'].sum()
+        # print(month)
         ax.bar(month.index, month,)
         ax.set_xticks([1,2,3,4,5,6,7,8,9,10,11,12])
         ax.set_xlabel('Months')
         ax.set_ylabel('Amount spent')
         ax.set_title('My yearly expense')
+        # print(sum(month))
+        # print(month.index)
         # Save it to a temporary buffer.
-        month=month.to_dict()
-        for i in month:
-            month[i] = round(month[i],3)
-            print(month[i])
         buf = BytesIO()
         fig.savefig(buf, format="png")
         buf.seek(0)
+        month=month.to_dict()
+        for i in month:
+            month[i] = round(month[i],3)
+        month['year'] = int(year)
+        # Embed the result in the html output.
+        data = base64.b64encode(buf.getbuffer()).decode("ascii")
+        # print(month.to_dict())
+        return render_template('dashboard.html', year=data, user=user, month_names = month_names, months_data = month,years_available=years_available)
+    return redirect(url_for('login_page'))
+
+
+
+
+####################################################
+# Dashboard page per month
+@app.route('/dashboard/<year>/<specific_month>', methods=['GET', 'POST'])
+def dashboard_month(year,specific_month):
+    if 'user_id' in session:
+         # print('user in session')
+        user = users.find_one({'email': session['user_id']})
+        years_available = df[df['CustomerID']==user['CustomerID']]['Year'].unique()
+        # print(years_available)
+        fig = Figure(figsize=(12, 8), linewidth=0)
+        ax = fig.subplots()
+        single_customer = df[(df['CustomerID'] == user['CustomerID']) & (df['Year']==int(year))]
+        # single_customer = df[df['CustomerID'] == 17914]
+        #monthly spend
+        month = single_customer.groupby('Month')['TotalPrice'].sum()
+        # print(month)
+        ax.bar(month.index, month,)
+        ax.set_xticks([1,2,3,4,5,6,7,8,9,10,11,12])
+        ax.set_xlabel('Months')
+        ax.set_ylabel('Amount spent')
+        ax.set_title('My yearly expense')
+        # print(sum(month))
+        # print(month.index)
+        # Save it to a temporary buffer.
+        buf = BytesIO()
+        fig.savefig(buf, format="png")
+        buf.seek(0)
+        month=month.to_dict()
+        for i in month:
+            month[i] = round(month[i],3)
+        month['year'] = int(year)
         # Embed the result in the html output.
         data = base64.b64encode(buf.getbuffer()).decode("ascii")
         #month wise
@@ -241,13 +292,35 @@ def dashboard_month(specific_month):
         one_month = one_month.to_dict()
         for i in one_month:
             one_month[i] = round(one_month[i],3)
-            print(one_month[i])
         # Embed the result in the html output.
         data1 = base64.b64encode(buf1.getbuffer()).decode("ascii")
         # print(one_month)
-        return render_template('dashboard.html', year=data, month=data1, user=user,months_data = month, days_purchased = one_month, month_names = month_names)
+        return render_template('dashboard.html', year=data, month=data1, user=user,months_data = month, days_purchased = one_month, month_names = month_names,years_available=years_available)
     return redirect(url_for('login_page'))
 
+
+####################################################
+# View invoice per each date
+@app.route('/invoice/<date>')
+def invoice(date):
+    if 'user_id' in session:
+        print(date[:4])
+        user = users.find_one({'email': session['user_id']})
+        invoice_df = df[(df['CustomerID']==user['CustomerID']) & (df['Date']==date)]
+        invoices = invoice_df['InvoiceNo'].unique()
+        return render_template('invoice.html',user=user, invoices = invoices ,date=date)
+    
+
+####################################################
+# View invoice data
+# View invoice per each date
+@app.route('/view-invoice/<invoice>')
+def view_invoice(invoice):
+    if 'user_id' in session:
+        user = users.find_one({'email': session['user_id']})
+        invoice_data = df[(df['CustomerID']==user['CustomerID']) & (df['InvoiceNo']==int(invoice))]
+        ninvoice_data = invoice_data.to_dict(orient = 'records')
+        return (ninvoice_data)
 
 
 

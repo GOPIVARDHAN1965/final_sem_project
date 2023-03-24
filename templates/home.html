@@ -4,17 +4,37 @@
     {% block head %}
     <title>Home</title>
     {% endblock %}
-
     <link rel="stylesheet" href="static/home.css" />
+    <script>
+      /* When the user clicks on the button, 
+      toggle between hiding and showing the dropdown content */
+      function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+      }
+      
+      // Close the dropdown if the user clicks outside of it
+      window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+          var dropdowns = document.getElementsByClassName("dropdown-content");
+          var i;
+          for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+              openDropdown.classList.remove('show');
+            }
+          }
+        }
+      }
+      </script>
   </head>
 
   <body>
     <div class="header">
       <div class="header-left">
         <a class="logo-box" href="{{url_for('home')}}">
-          <img class="logo" src="static/logo1.avif" />
+          <img class="logo" src="static/logo1.avif" alt="Home" />
         </a>
-        <a class="logo-box" href="{{url_for('dashboard')}}"> Dashboard </a>
+        <a class="logo-box" href="/dashboard"> Dashboard </a>
       </div>
       <div class="header-middle">
         <form action="/search" method="GET">
@@ -33,10 +53,18 @@
           <p class="user-name">{{user['first_name']}}</p>
           <p class="user-customerid">CustomerID: {{user['CustomerID']}}</p>
         </div>
-
-        <button class="button-icon">
+        <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn">
+             <img class="user-profile-pic" src="static/user-avatar.svg"/>
+            </button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="/logout">Logout</a>
+          </div>
+        </div>
+        <!-- <button >
           <img class="user-profile-pic" src="static/user-avatar.svg" />
-        </button>
+        </button> -->
       </div>
     </div>
     {% block body %}
@@ -46,7 +74,7 @@
     <div class="item-grid">
       {% if item_data|length >0 %} {% for each_item in item_data %}
       <div class="item-tile">
-        <div class="item-pic-row"><img class="item-pic" src></div>
+        <div class="item-pic-row"><img class="item-pic" src="{{each_item['img']}}"></div>
         <div class="item-info">
           <p class="item-description">Name: {{each_item['Description']}}</p>
           <p class="item-stock-code">StcokCode: {{each_item['StockCode']}}</p>

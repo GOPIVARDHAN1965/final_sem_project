@@ -1,0 +1,17 @@
+{% extends 'home.html' %}
+{% block head %}
+<title>Invoice</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='home.css') }}" />
+{% endblock %}
+{% block body %}
+<p>Purchases made on {{date}}</p>
+<ul>
+    {% if invoices|length >0 %}
+    {% for each_invoice in invoices %}
+   <a href="/view-invoice/{{each_invoice}}"> <li>Invoice no: {{each_invoice}}</li></a>
+    {% endfor %}
+    {% endif %}
+</ul>
+
+
+{% endblock %}
