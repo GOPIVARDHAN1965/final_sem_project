@@ -117,7 +117,15 @@ def home():
             temp = items[items['StockCode']==each_code].iloc[0]
             item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
         # print(item_data)
-        return render_template('home.html', user=user, item_data = item_data)
+        #top picks by users around you
+        top_picks=df.groupby(['StockCode'])['Quantity'].sum().sort_values(ascending=False)
+        top_picks=top_picks[:30].index.to_list()
+        top_data = []
+        for each_code in top_picks:
+            temp = items[items['StockCode']==each_code].iloc[0]
+            top_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
+        print(top_data)
+        return render_template('home.html', user=user, item_data = item_data, top_data=top_data)
     return redirect(url_for('login_page'))
 
 
@@ -312,7 +320,6 @@ def invoice(date):
     
 
 ####################################################
-# View invoice data
 # View invoice per each date
 @app.route('/view-invoice/<invoice>')
 def view_invoice(invoice):
@@ -320,10 +327,28 @@ def view_invoice(invoice):
         user = users.find_one({'email': session['user_id']})
         invoice_data = df[(df['CustomerID']==user['CustomerID']) & (df['InvoiceNo']==int(invoice))]
         ninvoice_data = invoice_data.to_dict(orient = 'records')
-        return (ninvoice_data)
+        # return (ninvoice_data)
+        return render_template('view_invoice.html',user=user,data=ninvoice_data)
+
+
+####################################################
+# profile update
+@app.route('/profile')
+def profile():
+    if 'user_id' in session:
+        user = users.find_one({'email': session['user_id']})
+        return render_template('profile.html',user=user,)
 
 
 
+
+
+
+
+
+
+####################################################
+# logout
 @app.route('/logout')
 def logout():
     session.clear()

@@ -21,9 +21,10 @@
     </div>
     <div class="table-body">
       {% for each in months_data %}
-      <div class="table-left">{{month_names[each]}}</div>
-      <div class="table-right">$. {{months_data[each]}} </div>
+      <div class="table-left">{% if each in month_names %} {{month_names[each]}}  {%endif%} </div>
+      <div class="table-right">{% if each in month_names %} $. {{months_data[each]}}  {%endif%}  </div>
       {% endfor %} {% endif %}
+      
     </div>
   </div>
 </div>
@@ -56,5 +57,4 @@
       </div>
   </div>
 </div>
-
 {% endif %} {% endblock %}

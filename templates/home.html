@@ -58,7 +58,7 @@
              <img class="user-profile-pic" src="static/user-avatar.svg"/>
             </button>
           <div id="myDropdown" class="dropdown-content">
-            <a href="#">Profile</a>
+            <a href="/profile">Profile</a>
             <a href="/logout">Logout</a>
           </div>
         </div>
@@ -68,6 +68,23 @@
       </div>
     </div>
     {% block body %}
+    <div class="page-heading">
+      <p class="page-heading-text">Top Items people are buying around you</p>
+    </div>
+    <div class="item-grid">
+      {% if top_data|length >0 %} {% for each_item in top_data %}
+      <div class="item-tile">
+        <div class="item-pic-row"><img class="item-pic" src="{{each_item['img']}}"></div>
+        <div class="item-info">
+          <p class="item-description">Name: {{each_item['Description']}}</p>
+          <p class="item-stock-code">StcokCode: {{each_item['StockCode']}}</p>
+          <p class="item-price">Price: $. {{each_item['UnitPrice']}}</p>
+          <!-- <p class="item-rating">Item rating</p> -->
+        </div>
+      </div>
+      {% endfor %} {% endif %}
+    </div>
+    <!-- user based search-suggestions -->
     <div class="page-heading">
       <p class="page-heading-text">Our top picks for you</p>
     </div>
