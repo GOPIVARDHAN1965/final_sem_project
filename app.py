@@ -124,7 +124,7 @@ def home():
         for each_code in top_picks:
             temp = items[items['StockCode']==each_code].iloc[0]
             top_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
-        print(top_data)
+        # print(top_data)
         return render_template('home.html', user=user, item_data = item_data, top_data=top_data)
     return redirect(url_for('login_page'))
 
@@ -136,11 +136,11 @@ def search():
     if 'user_id' in session:
         user = users.find_one({'email': session['user_id']})
         query = request.args['box-txt']
-        print(query)
-        print(type(query))
+        # print(query)
+        # print(type(query))
         result = items.loc[items['Description'].str.contains(query.upper())]['Description']
         suggestions = result.to_list()
-        print(suggestions[:10])
+        # print(suggestions[:10])
         # return jsonify(suggestions[:10])
         return render_template('search.html', user=user,suggestions=suggestions[:12],query=query)
     return redirect(url_for('login_page'))
@@ -164,7 +164,7 @@ def find_item(name):
         item_data = []
         temp = items[items['StockCode']==top_purchses].iloc[0]
         item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
-        print(item_data)
+        # print(item_data)
         for each_code in recommendations:
             temp = items[items['StockCode']==each_code].iloc[0]
             item_data.append({'StockCode':temp['StockCode'],'Description' :temp['Description'],'UnitPrice': temp['UnitPrice'],'img': temp['img']})
@@ -327,8 +327,10 @@ def view_invoice(invoice):
         user = users.find_one({'email': session['user_id']})
         invoice_data = df[(df['CustomerID']==user['CustomerID']) & (df['InvoiceNo']==int(invoice))]
         ninvoice_data = invoice_data.to_dict(orient = 'records')
-        # return (ninvoice_data)
-        return render_template('view_invoice.html',user=user,data=ninvoice_data)
+        total = invoice_data.groupby('InvoiceNo')['TotalPrice'].sum()
+        total= (total.values)
+        total = total[0]
+        return render_template('view_invoice.html',user=user,data=ninvoice_data, total=round(total,2))
 
 
 ####################################################
@@ -338,13 +340,6 @@ def profile():
     if 'user_id' in session:
         user = users.find_one({'email': session['user_id']})
         return render_template('profile.html',user=user,)
-
-
-
-
-
-
-
 
 
 ####################################################
